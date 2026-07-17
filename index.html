@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050506">
+<title>Carl Meyer — Faith. Iron. Ambition.</title>
+<meta name="description" content="1:1 online bodybuilding coaching from a competitive athlete pursuing his IFBB Pro card. Faith-first, real training, no guru act.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --text-primary: #F4F1EA; --text-secondary: #B8B6B0; --text-tertiary: #76746E;
+  --accent: #6EE7B7; --danger: #FF6B6B;
+  --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #000; color: var(--text-secondary); font-family: var(--font); }
+body { overflow-x: hidden; }
+.section { max-width: 720px; margin: 0 auto; padding: 60px 20px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight: 700; margin: 0 0 16px; }
+.hero { padding-top: max(80px, env(safe-area-inset-top)); text-align: center; }
+.hero h1 { font-size: 34px; font-style: italic; line-height: 1.25; max-width: 620px; margin-left: auto; margin-right: auto; }
+.hero .subhead { font-size: 17px; color: var(--text-primary); margin-bottom: 28px; }
+.photo-slot { background: linear-gradient(135deg, rgba(110,231,183,0.06), rgba(255,255,255,0.03)); border: 1px dashed rgba(255,255,255,0.12); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 13px; }
+.hero .photo-slot { height: 380px; margin-bottom: 28px; }
+.btn { display: inline-block; padding: 14px 28px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); color: #052e16; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; }
+.transformation-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.transformation-split .photo-slot { height: 320px; }
+.transformation-caption { text-align: center; font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--text-primary); }
+.founding-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(110,231,183,0.15); border-radius: 20px; padding: 32px 28px; text-align: center; }
+.founding-card p { font-size: 16px; line-height: 1.6; color: var(--text-secondary); }
+.who-list { font-size: 16px; line-height: 1.8; }
+.who-list p { margin: 0 0 14px; }
+@media (max-width: 480px) {
+  .hero h1 { font-size: 26px; }
+  .transformation-split { grid-template-columns: 1fr; }
+  .section { padding: 40px 16px; }
+}
+</style>
+</head>
+<body>
+
+<section class="section hero">
+  <div class="eyebrow">Faith. Iron. Ambition.</div>
+  <h1>"Physical training is of some value. Godliness has value for all things." &mdash; 1 Timothy 4:8</h1>
+  <div class="subhead">I'm in the best shape of my life &mdash; and nobody knows what that cost.</div>
+  <div class="photo-slot">📷 hero photo</div>
+  <a href="#apply" class="btn">Apply for Coaching</a>
+</section>
+
+<section class="section">
+  <h2>This Wasn't 90 Days</h2>
+  <div class="transformation-split">
+    <div class="photo-slot">📷 old me</div>
+    <div class="photo-slot">📷 current me</div>
+  </div>
+</section>
+
+<section class="section" id="founding">
+  <div class="founding-card">
+    <h2>Now Taking Founding Clients</h2>
+    <p>I'm opening a small number of 1:1 coaching spots. While I compete toward my IFBB Pro card and run my own firm, I only take on what I can give real attention &mdash; full programming, real feedback, nothing generic. Once these founding spots are filled, the rate goes up for anyone after.</p>
+    <a href="#apply" class="btn">Apply for Coaching</a>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Who This Is</h2>
+  <div class="who-list">
+    <p>Competitive bodybuilder chasing an IFBB Pro card.</p>
+    <p>Faith first &mdash; in training and everywhere else.</p>
+    <p>Real programming, not a template. I'm not ahead of you &mdash; I'm just going first.</p>
+  </div>
+</section>
+
+</body>
+</html>
