@@ -37,10 +37,24 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 .founding-card p { font-size: 16px; line-height: 1.6; color: var(--text-secondary); }
 .who-list { font-size: 16px; line-height: 1.8; }
 .who-list p { margin: 0 0 14px; }
+.apply-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+.field input, .field select, .field textarea {
+  padding: 12px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+  background: rgba(0,0,0,0.28); color: var(--text-primary); font-family: inherit; font-size: 15px; outline: none;
+}
+.field textarea { min-height: 90px; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.apply-status { font-size: 13px; color: var(--text-tertiary); margin-top: 10px; min-height: 16px; }
+.apply-status.error { color: var(--danger); }
+.apply-submit { width: 100%; padding: 14px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); color: #052e16; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.apply-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 @media (max-width: 480px) {
   .hero h1 { font-size: 26px; }
   .transformation-split { grid-template-columns: 1fr; }
   .section { padding: 40px 16px; }
+  .row2 { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -79,5 +93,72 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
   </div>
 </section>
 
+<section class="section" id="apply">
+  <h2>Apply for Coaching</h2>
+  <div class="apply-card">
+    <div class="field"><label>Name</label><input id="fName" type="text" placeholder="Your name"></div>
+    <div class="field"><label>Email</label><input id="fEmail" type="email" placeholder="you@example.com"></div>
+    <div class="row2">
+      <div class="field"><label>Stage</label>
+        <select id="fStage">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate" selected>Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      <div class="field"><label>Goal</label>
+        <select id="fGoal">
+          <option value="cut">Cut</option>
+          <option value="bulk">Bulk</option>
+          <option value="recomp" selected>Recomp</option>
+          <option value="contest-prep">Contest prep</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Message</label><textarea id="fMessage" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
+    <button type="button" class="apply-submit" id="applySubmitBtn">Submit Application</button>
+    <div class="apply-status" id="applyStatus"></div>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+  const SUPABASE_URL = 'https://vikpcejlyxieguorwysf.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_EvWPtfW1FBW5Vf-H6w0yHw_PcXK4imv';
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  document.getElementById('applySubmitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('applySubmitBtn');
+    const statusEl = document.getElementById('applyStatus');
+    statusEl.className = 'apply-status';
+
+    const name = document.getElementById('fName').value.trim();
+    const email = document.getElementById('fEmail').value.trim();
+    const stage = document.getElementById('fStage').value;
+    const goal = document.getElementById('fGoal').value;
+    const message = document.getElementById('fMessage').value.trim();
+
+    if (!name) { statusEl.textContent = 'Name is required.'; statusEl.className = 'apply-status error'; return; }
+    if (!isValidEmail(email)) { statusEl.textContent = 'A valid email is required.'; statusEl.className = 'apply-status error'; return; }
+
+    btn.disabled = true;
+    const { error } = await supa.from('coaching_inquiries').insert({
+      name: name, email: email, stage: stage, goal: goal, message: message
+    });
+    if (error) {
+      statusEl.textContent = 'Something went wrong: ' + error.message;
+      statusEl.className = 'apply-status error';
+      btn.disabled = false;
+      return;
+    }
+    window.location.href = 'thanks.html';
+  });
+})();
+</script>
 </body>
 </html>
