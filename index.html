@@ -96,8 +96,8 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 <section class="section" id="apply">
   <h2>Apply for Coaching</h2>
   <div class="apply-card">
-    <div class="field"><label>Name</label><input id="fName" type="text" placeholder="Your name"></div>
-    <div class="field"><label>Email</label><input id="fEmail" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Name</label><input id="fName" type="text" maxlength="100" placeholder="Your name"></div>
+    <div class="field"><label>Email</label><input id="fEmail" type="email" maxlength="200" placeholder="you@example.com"></div>
     <div class="row2">
       <div class="field"><label>Stage</label>
         <select id="fStage">
@@ -115,7 +115,7 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
         </select>
       </div>
     </div>
-    <div class="field"><label>Message</label><textarea id="fMessage" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
+    <div class="field"><label>Message</label><textarea id="fMessage" maxlength="2000" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
     <button type="button" class="apply-submit" id="applySubmitBtn">Submit Application</button>
     <div class="apply-status" id="applyStatus"></div>
   </div>
