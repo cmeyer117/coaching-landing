@@ -114,5 +114,117 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
   </div>
 </section>
 
+<script>
+(function () {
+  'use strict';
+  const SUPABASE_URL = 'https://vikpcejlyxieguorwysf.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_EvWPtfW1FBW5Vf-H6w0yHw_PcXK4imv';
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function calculateMacros({ sex, age, heightIn, weightLb, activityLevel, goal }) {
+    const ACTIVITY_MULTIPLIERS = { 1: 1.2, 2: 1.375, 3: 1.55, 4: 1.725, 5: 1.9 };
+    const GOAL_ADJUSTMENTS = { cut: 0.8, bulk: 1.125, recomp: 0.95 };
+    const CARB_FLOOR_G = 50;
+
+    const weightKg = weightLb * 0.45359237;
+    const heightCm = heightIn * 2.54;
+
+    const bmr = sex === 'male'
+      ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
+      : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+
+    const tdee = bmr * ACTIVITY_MULTIPLIERS[activityLevel];
+    const calories = tdee * GOAL_ADJUSTMENTS[goal];
+
+    const proteinG = weightLb;
+    let fatG = (0.25 * calories) / 9;
+    let carbG = (calories - proteinG * 4 - fatG * 9) / 4;
+
+    if (carbG < CARB_FLOOR_G) {
+      carbG = CARB_FLOOR_G;
+      fatG = (calories - proteinG * 4 - carbG * 4) / 9;
+    }
+
+    return {
+      calories: Math.round(calories),
+      proteinG: Math.round(proteinG),
+      fatG: Math.round(fatG),
+      carbG: Math.round(carbG),
+    };
+  }
+
+  // Self-check (matches spec TDD cases) - logs an assertion failure to the
+  // console if the formula ever regresses, since there's no test runner here.
+  (function selfCheck() {
+    const r1 = calculateMacros({ sex: 'male', age: 25, heightIn: 70, weightLb: 180, activityLevel: 3, goal: 'cut' });
+    console.assert(r1.calories === 2242 && r1.proteinG === 180 && r1.fatG === 62 && r1.carbG === 240,
+      'calculateMacros self-check failed (normal case)', r1);
+
+    const r2 = calculateMacros({ sex: 'female', age: 90, heightIn: 60, weightLb: 65, activityLevel: 1, goal: 'cut' });
+    console.assert(r2.calories === 611 && r2.proteinG === 65 && r2.fatG === 17 && r2.carbG === 50,
+      'calculateMacros self-check failed (carb-floor case)', r2);
+  })();
+
+  document.getElementById('mSubmitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('mSubmitBtn');
+    const statusEl = document.getElementById('mStatus');
+    const resultsEl = document.getElementById('mResults');
+    statusEl.className = 'calc-status';
+    resultsEl.classList.remove('show');
+
+    const sex = document.getElementById('mSex').value;
+    const age = parseInt(document.getElementById('mAge').value, 10);
+    const weightLb = parseFloat(document.getElementById('mWeight').value);
+    const heightFt = parseInt(document.getElementById('mHeightFt').value, 10);
+    const heightInPart = parseInt(document.getElementById('mHeightIn').value, 10);
+    const activityLevel = parseInt(document.getElementById('mActivity').value, 10);
+    const goal = document.getElementById('mGoal').value;
+    const email = document.getElementById('mEmail').value.trim();
+
+    if (isNaN(age) || age < 13 || age > 100) {
+      statusEl.textContent = 'Age must be between 13 and 100.'; statusEl.className = 'calc-status error'; return;
+    }
+    if (isNaN(weightLb) || weightLb < 60 || weightLb > 600) {
+      statusEl.textContent = 'Weight must be between 60 and 600 lb.'; statusEl.className = 'calc-status error'; return;
+    }
+    if (isNaN(heightFt) || isNaN(heightInPart)) {
+      statusEl.textContent = 'Enter your height in feet and inches.'; statusEl.className = 'calc-status error'; return;
+    }
+    const heightIn = heightFt * 12 + heightInPart;
+    if (heightIn < 36 || heightIn > 96) {
+      statusEl.textContent = 'Height must be between 3\'0" and 8\'0".'; statusEl.className = 'calc-status error'; return;
+    }
+    if (!isValidEmail(email)) {
+      statusEl.textContent = 'A valid email is required to see your results.'; statusEl.className = 'calc-status error'; return;
+    }
+
+    const macros = calculateMacros({ sex, age, heightIn, weightLb, activityLevel, goal });
+
+    btn.disabled = true;
+    const { error } = await supa.from('macro_leads').insert({
+      email: email, sex: sex, age: age, height_in: heightIn, weight_lb: weightLb,
+      activity_level: activityLevel, goal: goal,
+      calories: macros.calories, protein_g: macros.proteinG, fat_g: macros.fatG, carb_g: macros.carbG
+    });
+    btn.disabled = false;
+
+    if (error) {
+      statusEl.textContent = 'Something went wrong: ' + error.message;
+      statusEl.className = 'calc-status error';
+      return;
+    }
+
+    document.getElementById('mResCalories').textContent = macros.calories;
+    document.getElementById('mResProtein').textContent = macros.proteinG;
+    document.getElementById('mResFat').textContent = macros.fatG;
+    document.getElementById('mResCarb').textContent = macros.carbG;
+    resultsEl.classList.add('show');
+  });
+})();
+</script>
 </body>
 </html>
