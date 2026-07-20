@@ -170,6 +170,9 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 
   document.getElementById('mSubmitBtn').addEventListener('click', async () => {
     const btn = document.getElementById('mSubmitBtn');
+    if (btn.disabled) return;
+    btn.disabled = true;
+
     const statusEl = document.getElementById('mStatus');
     const resultsEl = document.getElementById('mResults');
     statusEl.className = 'calc-status';
@@ -185,25 +188,24 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
     const email = document.getElementById('mEmail').value.trim();
 
     if (isNaN(age) || age < 13 || age > 100) {
-      statusEl.textContent = 'Age must be between 13 and 100.'; statusEl.className = 'calc-status error'; return;
+      statusEl.textContent = 'Age must be between 13 and 100.'; statusEl.className = 'calc-status error'; btn.disabled = false; return;
     }
     if (isNaN(weightLb) || weightLb < 60 || weightLb > 600) {
-      statusEl.textContent = 'Weight must be between 60 and 600 lb.'; statusEl.className = 'calc-status error'; return;
+      statusEl.textContent = 'Weight must be between 60 and 600 lb.'; statusEl.className = 'calc-status error'; btn.disabled = false; return;
     }
     if (isNaN(heightFt) || isNaN(heightInPart)) {
-      statusEl.textContent = 'Enter your height in feet and inches.'; statusEl.className = 'calc-status error'; return;
+      statusEl.textContent = 'Enter your height in feet and inches.'; statusEl.className = 'calc-status error'; btn.disabled = false; return;
     }
     const heightIn = heightFt * 12 + heightInPart;
     if (heightIn < 36 || heightIn > 96) {
-      statusEl.textContent = 'Height must be between 3\'0" and 8\'0".'; statusEl.className = 'calc-status error'; return;
+      statusEl.textContent = 'Height must be between 3\'0" and 8\'0".'; statusEl.className = 'calc-status error'; btn.disabled = false; return;
     }
     if (!isValidEmail(email)) {
-      statusEl.textContent = 'A valid email is required to see your results.'; statusEl.className = 'calc-status error'; return;
+      statusEl.textContent = 'A valid email is required to see your results.'; statusEl.className = 'calc-status error'; btn.disabled = false; return;
     }
 
     const macros = calculateMacros({ sex, age, heightIn, weightLb, activityLevel, goal });
 
-    btn.disabled = true;
     const { error } = await supa.from('macro_leads').insert({
       email: email, sex: sex, age: age, height_in: heightIn, weight_lb: weightLb,
       activity_level: activityLevel, goal: goal,
