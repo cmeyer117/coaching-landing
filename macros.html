@@ -35,7 +35,6 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
   background: rgba(0,0,0,0.28); color: var(--text-primary); font-family: inherit; font-size: 15px; outline: none;
 }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 .calc-status { font-size: 13px; color: var(--text-tertiary); margin-top: 10px; min-height: 16px; }
 .calc-status.error { color: var(--danger); }
 .calc-submit { width: 100%; padding: 14px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); color: #052e16; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
@@ -52,7 +51,7 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 @media (max-width: 480px) {
   .hero h1 { font-size: 24px; }
   .section { padding: 40px 16px; }
-  .row2, .row3 { grid-template-columns: 1fr; }
+  .row2 { grid-template-columns: 1fr; }
   .results-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
