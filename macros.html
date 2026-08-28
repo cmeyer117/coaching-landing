@@ -117,10 +117,16 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 (function () {
   'use strict';
 
+  // Known, accepted limitation: this read-then-write isn't atomic, so two
+  // tabs opened as simultaneous first visits could each write a different
+  // touch, with the later write winning. Not fixed -- both are genuinely
+  // first-touch data for the same visitor, and avoiding it needs the Web
+  // Locks API, more complexity than a two-page lead form needs.
   function captureAttribution() {
     try {
       const existing = localStorage.getItem('attribution');
-      if (existing) return JSON.parse(existing);
+      const parsed = existing ? JSON.parse(existing) : null;
+      if (parsed && typeof parsed === 'object') return parsed;
     } catch (e) { /* corrupted or blocked -- fall through and capture fresh */ }
 
     const params = new URLSearchParams(location.search);
@@ -138,7 +144,8 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
   function readAttribution() {
     try {
       const raw = localStorage.getItem('attribution');
-      return raw ? JSON.parse(raw) : {};
+      const parsed = raw ? JSON.parse(raw) : {};
+      return (parsed && typeof parsed === 'object') ? parsed : {};
     } catch (e) { return {}; }
   }
 
