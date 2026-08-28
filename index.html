@@ -132,6 +132,34 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
 <script>
 (function () {
   'use strict';
+
+  function captureAttribution() {
+    try {
+      const existing = localStorage.getItem('attribution');
+      if (existing) return JSON.parse(existing);
+    } catch (e) { /* corrupted or blocked -- fall through and capture fresh */ }
+
+    const params = new URLSearchParams(location.search);
+    const record = {
+      source: params.get('utm_source'),
+      campaign: params.get('utm_campaign'),
+      content_idea_id: params.get('content_idea_id'),
+      landing_path: location.pathname,
+      first_touch_at: new Date().toISOString()
+    };
+    try { localStorage.setItem('attribution', JSON.stringify(record)); } catch (e) { /* storage blocked -- record still usable this page load */ }
+    return record;
+  }
+
+  function readAttribution() {
+    try {
+      const raw = localStorage.getItem('attribution');
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  captureAttribution();
+
   const SUPABASE_URL = 'https://vikpcejlyxieguorwysf.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_EvWPtfW1FBW5Vf-H6w0yHw_PcXK4imv';
   const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -155,8 +183,14 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
     if (!isValidEmail(email)) { statusEl.textContent = 'A valid email is required.'; statusEl.className = 'apply-status error'; return; }
 
     btn.disabled = true;
+    const attribution = readAttribution();
     const { error } = await supa.from('coaching_inquiries').insert({
-      name: name, email: email, stage: stage, goal: goal, message: message
+      name: name, email: email, stage: stage, goal: goal, message: message,
+      source: attribution.source ?? null,
+      campaign: attribution.campaign ?? null,
+      content_idea_id: attribution.content_idea_id ?? null,
+      landing_path: attribution.landing_path ?? null,
+      first_touch_at: attribution.first_touch_at ?? null
     });
     if (error) {
       statusEl.textContent = 'Something went wrong: ' + error.message;
