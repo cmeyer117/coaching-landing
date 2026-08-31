@@ -1,143 +1,242 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050506">
 <title>Carl Meyer — Faith. Iron. Ambition.</title>
 <meta name="description" content="1:1 online bodybuilding coaching from a competitive athlete pursuing his IFBB Pro card. Faith-first, real training, no guru act.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230A0806'/></svg>">
+<link rel="stylesheet" href="scrollcraft.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  --text-primary: #F4F1EA; --text-secondary: #B8B6B0; --text-tertiary: #76746E;
-  --accent: #6EE7B7; --danger: #FF6B6B;
-  --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: #000; color: var(--text-secondary); font-family: var(--font); }
-body { overflow-x: hidden; }
-.section { max-width: 720px; margin: 0 auto; padding: 60px 20px; }
-.eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight: 700; margin: 0 0 16px; }
-.hero { padding-top: max(80px, env(safe-area-inset-top)); text-align: center; }
-.hero h1 { font-size: 34px; font-style: italic; line-height: 1.25; max-width: 620px; margin-left: auto; margin-right: auto; }
-.hero .subhead { font-size: 17px; color: var(--text-primary); margin-bottom: 28px; }
-.photo-slot { background: linear-gradient(135deg, rgba(110,231,183,0.06), rgba(255,255,255,0.03)); border: 1px dashed rgba(255,255,255,0.12); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 13px; }
-.hero .photo-slot { height: 380px; margin-bottom: 28px; }
-.btn { display: inline-block; padding: 14px 28px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); color: #052e16; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; }
-.transformation-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-.transformation-split .photo-slot { height: 320px; }
-.transformation-caption { text-align: center; font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--text-primary); }
-.founding-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(110,231,183,0.15); border-radius: 20px; padding: 32px 28px; text-align: center; }
-.founding-card p { font-size: 16px; line-height: 1.6; color: var(--text-secondary); }
-.who-list { font-size: 16px; line-height: 1.8; }
-.who-list p { margin: 0 0 14px; }
-.apply-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; }
-.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.field label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
-.field input, .field select, .field textarea {
-  padding: 12px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
-  background: rgba(0,0,0,0.28); color: var(--text-primary); font-family: inherit; font-size: 15px; outline: none;
-}
-.field textarea { min-height: 90px; resize: vertical; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.apply-status { font-size: 13px; color: var(--text-tertiary); margin-top: 10px; min-height: 16px; }
-.apply-status.error { color: var(--danger); }
-.apply-submit { width: 100%; padding: 14px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); color: #052e16; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
-.apply-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-@media (max-width: 480px) {
-  .hero h1 { font-size: 26px; }
-  .transformation-split { grid-template-columns: 1fr; }
-  .section { padding: 40px 16px; }
-  .row2 { grid-template-columns: 1fr; }
-}
+  /* Carl Meyer rebrand: six colours, two faces + the existing site's mono for
+     labels. Off-black, not pure black (taste floor). Mint stays the one
+     accent, carried over from the live site for continuity. */
+  :root {
+    --sc-canvas:      #0A0806;
+    --sc-surface:     #16110E;
+    --sc-ink:         #F4F1EA;
+    --sc-ink-soft:    #A69E93;
+    --sc-accent:      #6EE7B7;
+    --sc-accent-ink:  #052E16;
+    --sc-font-display: "Instrument Serif", Georgia, serif;
+    --sc-font-text:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sc-font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  /* ---- the signature move: the verse rebalances live ---- */
+  /* Fixed the whole page. Not an act -- driven off document scroll fraction,
+     not any act's --sc-p, so it can hold state across the entire page. */
+  .verse-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; justify-content: center; gap: clamp(0.5rem, 2vw, 1.25rem);
+    padding: clamp(0.75rem, 2vw, 1.1rem) clamp(1rem, 4vw, 2rem);
+    font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
+    letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+    text-align: center; pointer-events: none; mix-blend-mode: difference;
+  }
+  .verse-bar span { transition: opacity 0.12s linear, font-weight 0.12s linear; opacity: var(--vb-op, 0.4); color: var(--sc-ink); }
+  .verse-bar .vb-training { font-weight: 700; }
+  .verse-bar .vb-godliness { font-weight: 700; }
+  .verse-bar .vb-sep { opacity: 0.3; }
+  @media (max-width: 620px) {
+    .verse-bar { font-size: 10px; gap: 0.4rem; }
+    .verse-bar .vb-training, .verse-bar .vb-godliness { display: block; }
+  }
+
+  .wrap { max-width: 46rem; margin: 0 auto; padding-inline: var(--sc-gutter); }
+  .lede { font-size: var(--sc-t-lg); color: var(--sc-ink); }
+  .card {
+    background: color-mix(in oklab, var(--sc-surface) 88%, transparent);
+    border: 1px solid var(--sc-hairline); border-radius: 1.1rem;
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+  }
+  .card + .card { margin-top: var(--sc-6); }
+  .card h3 { font-family: var(--sc-font-display); font-style: italic; font-size: var(--sc-t-xl); color: var(--sc-ink); margin: 0 0 var(--sc-3); }
+  .card p { font-size: var(--sc-t-base); color: var(--sc-ink-soft); margin: 0 0 var(--sc-5); }
+  .cta-link {
+    display: inline-block; padding: 0.85rem 1.75rem; border-radius: 0.75rem;
+    background: var(--sc-accent); color: var(--sc-accent-ink);
+    font-family: var(--sc-font-text); font-weight: 700; font-size: var(--sc-t-base);
+    text-decoration: none;
+  }
+
+  .identity-list { display: flex; flex-direction: column; gap: var(--sc-7); }
+  .identity-list figure { margin: 0; overflow: hidden; }
+  .identity-list p {
+    font-family: var(--sc-font-display); font-style: italic;
+    font-size: clamp(1.6rem, 4vw, var(--sc-t-2xl)); color: var(--sc-ink);
+    line-height: var(--sc-leading-snug, 1.2); margin: 0;
+  }
+
+  .close__inner { text-align: center; max-width: 38rem; margin: 0 auto; }
+  .apply-card { text-align: left; margin-top: var(--sc-7); }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: var(--sc-4); }
+  .field label { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); font-weight: 700; letter-spacing: var(--sc-track-wide); text-transform: uppercase; color: var(--sc-ink-soft); }
+  .field input, .field select, .field textarea {
+    padding: 0.75rem 0.85rem; border: 1px solid var(--sc-hairline-strong); border-radius: 0.6rem;
+    background: color-mix(in oklab, black 40%, transparent); color: var(--sc-ink);
+    font-family: var(--sc-font-text); font-size: var(--sc-t-base); outline: none;
+  }
+  .field textarea { min-height: 5.5rem; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sc-3); }
+  .apply-submit {
+    width: 100%; padding: 0.9rem; border: 0; border-radius: 0.75rem;
+    background: var(--sc-accent); color: var(--sc-accent-ink);
+    font-family: var(--sc-font-text); font-weight: 700; font-size: var(--sc-t-base); cursor: pointer;
+  }
+  .apply-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .apply-status { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); margin-top: var(--sc-3); min-height: 1rem; }
+  .apply-status.error { color: #FF6B6B; }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<section class="section hero">
-  <div class="eyebrow">Faith. Iron. Ambition.</div>
-  <h1>"Physical training is of some value. Godliness has value for all things." &mdash; 1 Timothy 4:8</h1>
-  <div class="subhead">I'm in the best shape of my life &mdash; and nobody knows what that cost.</div>
-  <div class="photo-slot">📷 hero photo</div>
-  <a href="#apply" class="btn">Apply for Coaching</a>
-</section>
+<span data-sc-progress></span>
+<div class="sc-grain" aria-hidden="true"></div>
 
-<section class="section">
-  <h2>This Wasn't 90 Days</h2>
-  <div class="transformation-split">
-    <div class="photo-slot">📷 old me</div>
-    <div class="photo-slot">📷 current me</div>
-  </div>
-</section>
+<div class="verse-bar" id="verseBar" aria-hidden="true">
+  <span class="vb-training" id="vbTraining">Physical training is of some value.</span>
+  <span class="vb-sep">&middot;</span>
+  <span class="vb-godliness" id="vbGodliness">Godliness has value for all things.</span>
+</div>
 
-<section class="section" id="founding">
-  <div class="founding-card">
-    <h2>Now Taking Founding Clients</h2>
-    <p>I'm opening a small number of 1:1 coaching spots. While I compete toward my IFBB Pro card and run my own firm, I only take on what I can give real attention &mdash; full programming, real feedback, nothing generic. Once these founding spots are filled, the rate goes up for anyone after.</p>
-    <a href="#apply" class="btn">Apply for Coaching</a>
-  </div>
-</section>
+<main id="top">
 
-<section class="section">
-  <div class="founding-card">
-    <h2>Free: Black Magma Macros</h2>
-    <p>Get your calories, protein, fat, and carbs dialed in 30 seconds &mdash; no strings, just a free calculator.</p>
-    <a href="macros.html" class="btn">Get My Macros</a>
-  </div>
-</section>
-
-<section class="section">
-  <h2>Who This Is</h2>
-  <div class="who-list">
-    <p>Competitive bodybuilder chasing an IFBB Pro card.</p>
-    <p>Faith first &mdash; in training and everywhere else.</p>
-    <p>Real programming, not a template. I'm not ahead of you &mdash; I'm just going first.</p>
-  </div>
-</section>
-
-<section class="section" id="apply">
-  <h2>Apply for Coaching</h2>
-  <div class="apply-card">
-    <div class="field"><label>Name</label><input id="fName" type="text" maxlength="100" placeholder="Your name"></div>
-    <div class="field"><label>Email</label><input id="fEmail" type="email" maxlength="200" placeholder="you@example.com"></div>
-    <div class="row2">
-      <div class="field"><label>Stage</label>
-        <select id="fStage">
-          <option value="beginner">Beginner</option>
-          <option value="intermediate" selected>Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
+  <!-- ACT 1 · RECOGNITION + TENSION: pin, kinetic hero, then the cost -->
+  <section data-sc-act="pin" data-sc-span="3.2" data-sc-drift="#0A0806">
+    <div data-sc-stage class="wrap" style="text-align:center;">
+      <div class="sc-copy" data-sc-cue="0 0.4 0">
+        <p class="lede" style="font-family: var(--sc-font-mono); text-transform: uppercase; letter-spacing: var(--sc-track-wide); color: var(--sc-accent);">1 Timothy 4:8</p>
+        <h1 class="sc-display sc-display--xl" data-sc-kinetic="lines" style="font-style: italic;">
+          "Physical training is of some value. Godliness has value for all things."
+        </h1>
       </div>
-      <div class="field"><label>Goal</label>
-        <select id="fGoal">
-          <option value="cut">Cut</option>
-          <option value="bulk">Bulk</option>
-          <option value="recomp" selected>Recomp</option>
-          <option value="contest-prep">Contest prep</option>
-        </select>
+      <div class="sc-copy" data-sc-cue="0.38 1">
+        <p class="lede" style="margin-top: var(--sc-8);">I'm in the best shape of my life &mdash; and nobody knows what that cost.</p>
       </div>
     </div>
-    <div class="field"><label>Message</label><textarea id="fMessage" maxlength="2000" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
-    <button type="button" class="apply-submit" id="applySubmitBtn">Submit Application</button>
-    <div class="apply-status" id="applyStatus"></div>
-  </div>
-</section>
+  </section>
+
+  <!-- ACT 2 · TURN: flow, reveal wipe on the founding offer -->
+  <section class="sc-section" data-sc-act="flow" data-sc-drift="#12100D">
+    <div class="wrap">
+      <figure data-sc-reveal="up" data-sc-reveal-at="0.1 0.5" style="margin: 0;">
+        <div class="card">
+          <h3>Now Taking Founding Clients</h3>
+          <p>I'm opening a small number of 1:1 coaching spots. While I compete toward my IFBB Pro card and run my own firm, I only take on what I can give real attention &mdash; full programming, real feedback, nothing generic. Once these founding spots are filled, the rate goes up for anyone after.</p>
+          <a href="#apply" class="cta-link">Apply for Coaching</a>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ACT 3 · WHO THIS IS: pin, plain sequential cues (distinct device from Act 1's kinetic) -->
+  <section data-sc-act="pin" data-sc-span="2.6" data-sc-drift="#0E1210">
+    <div data-sc-stage class="wrap">
+      <div class="identity-list">
+        <p data-sc-cue="0 0.34 0">Competitive bodybuilder chasing an IFBB Pro card.</p>
+        <p data-sc-cue="0.28 0.62">Faith first &mdash; in training and everywhere else.</p>
+        <p data-sc-cue="0.56 1">Real programming, not a template. I'm not ahead of you &mdash; I'm just going first.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACT 4 · SUBSTANCE: flow + in, plain stagger (distinct from Act 2's reveal wipe) -->
+  <section class="sc-section" data-sc-act="flow" data-sc-drift="#100D0A">
+    <div class="wrap sc-stack" data-sc-in data-sc-stagger="70">
+      <div class="card">
+        <h3>Free: Black Magma Macros</h3>
+        <p>Get your calories, protein, fat, and carbs dialed in 30 seconds &mdash; no strings, just a free calculator.</p>
+        <a href="macros.html" class="cta-link">Get My Macros</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACT 5 · COMMITMENT: pin + spotlight + magnet. Last element on the page. -->
+  <section id="apply" data-sc-act="pin" data-sc-span="1.7" data-sc-drift="#0A0806">
+    <div data-sc-stage class="close" data-sc-spotlight>
+      <div class="close__inner">
+        <h2 class="sc-display sc-display--lg" data-sc-cue="0.06" data-sc-kinetic="lines" style="font-style: italic;">Apply for Coaching</h2>
+
+        <div class="apply-card">
+          <div class="field"><label>Name</label><input id="fName" type="text" maxlength="100" placeholder="Your name"></div>
+          <div class="field"><label>Email</label><input id="fEmail" type="email" maxlength="200" placeholder="you@example.com"></div>
+          <div class="row2">
+            <div class="field"><label>Stage</label>
+              <select id="fStage">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate" selected>Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+            <div class="field"><label>Goal</label>
+              <select id="fGoal">
+                <option value="cut">Cut</option>
+                <option value="bulk">Bulk</option>
+                <option value="recomp" selected>Recomp</option>
+                <option value="contest-prep">Contest prep</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Message</label><textarea id="fMessage" maxlength="2000" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
+          <button type="button" class="apply-submit" id="applySubmitBtn" data-sc-magnet="0.2" data-sc-rise="0">Submit Application</button>
+          <div class="apply-status" id="applyStatus"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>ScrollCraft.mount(document.body);</script>
 
 <script>
 (function () {
   'use strict';
 
-  // Known, accepted limitation: this read-then-write isn't atomic, so two
-  // tabs opened as simultaneous first visits could each write a different
-  // touch, with the later write winning. Not fixed -- both are genuinely
-  // first-touch data for the same visitor, and avoiding it needs the Web
-  // Locks API, more complexity than a two-page lead form needs.
+  /* ---- signature move: the verse rebalances live ----
+     Fixed header, not an act. Driven off document scroll fraction so it
+     persists and inverts across the whole page rather than one act's --sc-p.
+     Training carries full weight in the training/cost acts (top of page),
+     godliness grows heavy toward the identity/faith acts (bottom). */
+  var training = document.getElementById('vbTraining');
+  var godliness = document.getElementById('vbGodliness');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function updateVerseBar() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var frac = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    // crossfade centred at the midpoint, full swing by the closing act
+    var trainingOp = 0.35 + 0.65 * (1 - frac);
+    var godlinessOp = 0.35 + 0.65 * frac;
+    training.style.setProperty('--vb-op', trainingOp.toFixed(2));
+    godliness.style.setProperty('--vb-op', godlinessOp.toFixed(2));
+    training.style.fontWeight = frac < 0.5 ? '700' : '400';
+    godliness.style.fontWeight = frac >= 0.5 ? '700' : '400';
+  }
+
+  if (reduced) {
+    training.style.setProperty('--vb-op', '0.7');
+    godliness.style.setProperty('--vb-op', '0.7');
+  } else {
+    updateVerseBar();
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () { updateVerseBar(); ticking = false; });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  /* ---- existing lead-capture wiring, unchanged from the live site ---- */
   function captureAttribution() {
     try {
       const existing = localStorage.getItem('attribution');
