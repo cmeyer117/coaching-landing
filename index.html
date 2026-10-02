@@ -185,7 +185,7 @@
           </div>
           <div class="field"><label>Message</label><textarea id="fMessage" maxlength="2000" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
           <!-- Honeypot (apply-guard.js): invisible to people, filled in by form-filling bots. Off-screen rather than display:none, which bots skip. -->
-          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label for="fWebsite">Leave this field empty</label><input id="fWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label for="fHpCheck">Leave this field empty</label><input id="fHpCheck" name="hp_check_q9x" type="text" tabindex="-1" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
           <button type="button" class="apply-submit" id="applySubmitBtn" data-sc-magnet="0.2" data-sc-rise="0">Submit Application</button>
           <div class="apply-status" id="applyStatus"></div>
         </div>
@@ -299,7 +299,7 @@
     // Bot guards (apply-guard.js). A filled honeypot gets a normal-looking success and nothing is stored, so the
     // script learns nothing. Too-fast submits are NOT dropped silently (a person with autofill could trip it):
     // they are asked to try again.
-    if (window.ApplyGuard.honeypotTripped(document.getElementById('fWebsite').value)) { window.location.href = 'thanks.html'; return; }
+    if (window.ApplyGuard.honeypotTripped(document.getElementById('fHpCheck').value)) { window.location.href = 'thanks.html'; return; }
     if (window.ApplyGuard.tooFast(pageLoadedAt, Date.now())) { statusEl.textContent = 'One more moment, then press Submit again.'; statusEl.className = 'apply-status error'; return; }
 
     btn.disabled = true;
