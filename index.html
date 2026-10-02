@@ -184,6 +184,8 @@
             </div>
           </div>
           <div class="field"><label>Message</label><textarea id="fMessage" maxlength="2000" placeholder="Tell me a bit about where you're at and what you want."></textarea></div>
+          <!-- Honeypot (apply-guard.js): invisible to people, filled in by form-filling bots. Off-screen rather than display:none, which bots skip. -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label for="fWebsite">Leave this field empty</label><input id="fWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <button type="button" class="apply-submit" id="applySubmitBtn" data-sc-magnet="0.2" data-sc-rise="0">Submit Application</button>
           <div class="apply-status" id="applyStatus"></div>
         </div>
@@ -194,6 +196,7 @@
 </main>
 
 <script src="scrollcraft.js"></script>
+<script src="apply-guard.js"></script>
 <script>ScrollCraft.mount(document.body);</script>
 
 <script>
@@ -265,6 +268,7 @@
   }
 
   captureAttribution();
+  const pageLoadedAt = Date.now();
 
   // The apply form writes to the coaching-app project, the one the owner dashboard's Pending Applications card reads.
   // It used to write to the old shared project (vikpcejlyxieguorwysf), so applications could never reach the dashboard.
@@ -292,15 +296,22 @@
     if (!name) { statusEl.textContent = 'Name is required.'; statusEl.className = 'apply-status error'; return; }
     if (!isValidEmail(email)) { statusEl.textContent = 'A valid email is required.'; statusEl.className = 'apply-status error'; return; }
 
+    // Bot guards (apply-guard.js). A filled honeypot gets a normal-looking success and nothing is stored, so the
+    // script learns nothing. Too-fast submits are NOT dropped silently (a person with autofill could trip it):
+    // they are asked to try again.
+    if (window.ApplyGuard.honeypotTripped(document.getElementById('fWebsite').value)) { window.location.href = 'thanks.html'; return; }
+    if (window.ApplyGuard.tooFast(pageLoadedAt, Date.now())) { statusEl.textContent = 'One more moment, then press Submit again.'; statusEl.className = 'apply-status error'; return; }
+
     btn.disabled = true;
-    const attribution = readAttribution();
+    // Clamped to the database limits so a long utm_* tag can never bounce a genuine application.
+    const attribution = window.ApplyGuard.clampAttribution(readAttribution());
     const { error } = await supa.from('coaching_inquiries').insert({
       name: name, email: email, stage: stage, goal: goal, message: message,
-      source: attribution.source ?? null,
-      campaign: attribution.campaign ?? null,
-      content_idea_id: attribution.content_idea_id ?? null,
-      landing_path: attribution.landing_path ?? null,
-      first_touch_at: attribution.first_touch_at ?? null
+      source: attribution.source,
+      campaign: attribution.campaign,
+      content_idea_id: attribution.content_idea_id,
+      landing_path: attribution.landing_path,
+      first_touch_at: attribution.first_touch_at
     });
     if (error) {
       statusEl.textContent = 'Something went wrong: ' + error.message;
