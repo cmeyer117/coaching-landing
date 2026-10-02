@@ -266,8 +266,12 @@
 
   captureAttribution();
 
-  const SUPABASE_URL = 'https://vikpcejlyxieguorwysf.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_EvWPtfW1FBW5Vf-H6w0yHw_PcXK4imv';
+  // The apply form writes to the coaching-app project, the one the owner dashboard's Pending Applications card reads.
+  // It used to write to the old shared project (vikpcejlyxieguorwysf), so applications could never reach the dashboard.
+  // REQUIRES migration 0007 (anon insert-only policy) applied in coaching-app first; deploying this before it makes
+  // every submit fail with a permission error. This is the publishable (public by design) key.
+  const SUPABASE_URL = 'https://bygkogytbxinubsnkwje.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_wzuL0UGFjhjLuN1XkQOmvw_bnYPMmiN';
   const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   function isValidEmail(email) {
