@@ -43,4 +43,20 @@ assert.deepEqual(plain(clampAttribution(null)), NULLS, 'corrupt storage never th
 assert.equal(clampAttribution({ source: 42 }).source, null, 'non-strings become null, not coerced');
 assert.equal(clampAttribution({ first_touch_at: 'not a date' }).first_touch_at, null, 'unparseable timestamps are dropped so the timestamptz column cannot reject the row');
 
+// --- the hidden honeypot input must not look like anything a browser or password manager auto-fills ---
+// (a field named "website" can be filled by autofill, which would silently drop a REAL application)
+const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const hp = html.match(/<input[^>]*id="fHpCheck"[^>]*>/);
+assert.ok(hp, 'honeypot input with id fHpCheck exists');
+const tag = hp[0];
+const idName = [(tag.match(/\bid="([^"]*)"/) || [])[1], (tag.match(/\bname="([^"]*)"/) || [])[1]].join(' ').toLowerCase();
+for (const word of ['website', 'url', 'site', 'web', 'email', 'name', 'phone', 'address', 'company', 'user', 'login', 'password']) {
+  assert.ok(!idName.includes(word), `honeypot id/name must not contain "${word}" (autofill target): ${idName}`);
+}
+assert.ok(/autocomplete="off"/.test(tag), 'autocomplete off');
+assert.ok(/tabindex="-1"/.test(tag), 'not reachable by keyboard');
+assert.ok(/data-1p-ignore/.test(tag) && /data-lpignore="true"/.test(tag), 'password managers told to ignore it');
+assert.ok(!/id="fWebsite"/.test(html) && !/getElementById\('fWebsite'\)/.test(html), 'old field id fully removed');
+assert.ok(/getElementById\('fHpCheck'\)/.test(html), 'submit handler reads the renamed field');
+
 console.log('apply-guard: all cases pass');
