@@ -242,6 +242,7 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
     const macros = calculateMacros({ sex, age, heightIn, weightLb, activityLevel, goal });
 
     const attribution = readAttribution();
+    try {
     const { error } = await supa.from('macro_leads').insert({
       email: email, sex: sex, age: age, height_in: heightIn, weight_lb: weightLb,
       activity_level: activityLevel, goal: goal,
@@ -265,6 +266,11 @@ h1, h2 { font-family: var(--font-serif); color: var(--text-primary); font-weight
     document.getElementById('mResFat').textContent = macros.fatG;
     document.getElementById('mResCarb').textContent = macros.carbG;
     resultsEl.classList.add('show');
+    } catch (err) {
+      statusEl.textContent = 'Submission outcome unknown. Confirm it was received before trying again.';
+      statusEl.className = 'calc-status error';
+      btn.disabled = false;
+    }
   });
 })();
 </script>

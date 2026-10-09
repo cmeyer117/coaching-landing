@@ -305,6 +305,7 @@
     btn.disabled = true;
     // Clamped to the database limits so a long utm_* tag can never bounce a genuine application.
     const attribution = window.ApplyGuard.clampAttribution(readAttribution());
+    try {
     const { error } = await supa.from('coaching_inquiries').insert({
       name: name, email: email, stage: stage, goal: goal, message: message,
       source: attribution.source,
@@ -320,6 +321,11 @@
       return;
     }
     window.location.href = 'thanks.html';
+    } catch (err) {
+      statusEl.textContent = 'Submission outcome unknown. Confirm it was received before trying again.';
+      statusEl.className = 'apply-status error';
+      btn.disabled = false;
+    }
   });
 })();
 </script>
